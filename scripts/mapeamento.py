@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import roslib
+import time
 #import sys
 
 from pioneer_sumo.msg import *
@@ -11,14 +12,13 @@ from pioneer_sumo.msg import *
 
 
 #Cria a classe do noo para publicar no motor
-class ControleRobo():
+class Map():
 
 	#Metodo criador da classe
 	def __init__(self,num_robo):
 
 		#defininc=do variaveis
-		self.x=0
-		self.y=0
+		
 		self.sensorTras=0
 		self.sensorFrente=0
 		rospy.loginfo("Num Robo "+ str(num_robo))
@@ -31,24 +31,24 @@ class ControleRobo():
 		#inicio do comando do robo
 		while not rospy.is_shutdown():
 			if self.sensorFrente >0.1:
-				if self.x>0.05:
-					self.GiraEsq()
-					rospy.loginfo("errado1")
-				elif self.x<-0.05:
-					self.GiraDir()
-					rospy.loginfo("errado2")
-				else:
-					self.Acelera()
-					rospy.loginfo("errado3")
+				
+				self.Acelera()
+				self.pub.publish(self.comando)
+					
 			else:
 				self.comando.motEsquerdo=0
 				self.comando.motDireito=0
+
+				self.GiraEsq()
+				time.sleep(3.38)
 				self.pub.publish(self.comando)
+	
 
 	#Funcao girar para esquerda
 	def GiraEsq(self):
 		self.comando.motEsquerdo=-0.3
 		self.comando.motDireito=0.3
+
 		self.pub.publish(self.comando)
 	#Funcao girar para direita
 	def GiraDir(self):
@@ -71,10 +71,10 @@ class ControleRobo():
 if __name__ == '__main__':
 
 	#Inicializa o nosso no com o nome
-	rospy.init_node('cognicao', anonymous=True)
+	rospy.init_node('mapeamento', anonymous=True)
 
 	#Instancia a classe e entra em um regime de tratamento de eventuais erros
 	try:
-		obj_no = ControleRobo(1)
+		obj_no = Map(1)
 	except rospy.ROSInterruptException: pass
 
