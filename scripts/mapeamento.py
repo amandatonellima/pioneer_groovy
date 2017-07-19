@@ -33,7 +33,7 @@ class Map():
 		while not rospy.is_shutdown():
 			
 				if self.sensordist[0]==-1 and self.sensordist[1]==-1 and self.sensordist[2]==-1 and self.sensordist[3]==-1 and self.sensordist[4]==-1 and self.sensordist[5]==-1 and self.sensordist[6]==-1 and self.sensordist[7]==-1 and self.sensordist[8]==-1 and self.sensordist[9]==-1 and self.sensordist[10]==-1 and self.sensordist[11]==-1 and self.sensordist[12]==-1 and self.sensordist[13]==-1 and self.sensordist[14]==-1 and self.sensordist[15]==-1:
-					if self.sensorFrente >0.12:
+					if self.sensorFrente >0.12 :
 						
 						self.Acelera()
 						self.pub.publish(self.comando)
@@ -42,9 +42,11 @@ class Map():
 						
 						self.comando.motEsquerdo=0
 						self.comando.motDireito=0
+						self.Re()
+						time.sleep(1.5)
+						self.pub.publish(self.comando)
 						self.GiraEsq()
 						time.sleep(3.38)
-				
 						self.pub.publish(self.comando)
 				else:
 					self.comando.motEsquerdo=0
@@ -68,6 +70,10 @@ class Map():
 	def Acelera(self):
 		self.comando.motEsquerdo=3
 		self.comando.motDireito=3
+		self.pub.publish(self.comando)
+	def Re(self):
+		self.comando.motEsquerdo=-0.3
+		self.comando.motDireito=-0.3
 		self.pub.publish(self.comando)
 			
 	#funcao que le o sensor no chao
