@@ -5,7 +5,7 @@ import time
 #import sys
 
 from pioneer_sumo.msg import *
-#from pioneer_sumo.msg import arma
+from pioneer_groovy.msg import coord
 #from pioneer_sumo.msg import motores
 #from pioneer_sumo.msg import sensores_chao
 #from pioneer_sumo.msg import sensores_dist
@@ -18,8 +18,8 @@ class ControleRobo():
 	def __init__(self,num_robo):
 
 		#defininc=do variaveis
-		self.x=0
-		self.y=5
+		self.x1=0
+		self.y1=0
 		self.sensordist=[None]*16
 		self.sensorTras1=0
 		self.sensorFrente1=0
@@ -30,12 +30,13 @@ class ControleRobo():
 		self.pub = rospy.Publisher('vrep_ros_interface/robo'+str(num_robo)+'/motores', motores, queue_size=1)
 		#rospy.Subscriber('joy', Joy, self.joy_callback)
 		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/sensoresChao',sensores_chao,self.sensorChaoCallback)	
-		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/sensoresDist',sensores_dist,self.sensorDistCallback)		
+		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/sensoresDist',sensores_dist,self.sensorDistCallback)	
+		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/coordenadas', coord, self.coordCallback)	
 		#rospy.spin()
 		self.comando=motores()
 		#inicio do comando do robo
 		while not rospy.is_shutdown():
-			if self.sensordist[0]==-1 and self.sensordist[1]==-1 and self.sensordist[2]==-1 and self.sensordist[3]==-1 and self.sensordist[4]==-1 and self.sensordist[5]==-1 and self.sensordist[6]==-1 and self.sensordist[7]==-1 and self.sensordist[8]==-1 and self.sensordist[9]==-1 and self.sensordist[10]==-1 and self.sensordist[11]==-1 and self.sensordist[12]==-1 and self.sensordist[13]==-1 and self.sensordist[14]==-1 and self.sensordist[15]==-1:
+			if self.x1==0 and self.y1==0:
 				if self.sensorTras1 >0.11 and self.sensorTras2 >0.11 :
 						
 					self.Re()
@@ -46,39 +47,75 @@ class ControleRobo():
 					self.comando.motEsquerdo=0
 					self.comando.motDireito=0
 					self.GiraEsq()
-					time.sleep(0.2)
+					time.sleep(1)
 					self.pub.publish(self.comando)
 			elif self.sensorTras1 >0.11 and self.sensorTras2 >0.11 :
-				if self.x>0.05:
-					self.GiraEsq()
-					rospy.loginfo("errado1")
-				elif self.x<-0.05:
-					self.GiraDir()
-					rospy.loginfo("errado2")
-				else:
+				if self.y1>0 and self.x1>0:
+					self.comando.motEsquerdo=0
+					self.comando.motDireito=0
+					
+					self.GiraEsq1()
+					time.sleep(0.5)
 					self.Acelera()
-					rospy.loginfo("errado3")
+					self.pub.publish(self.comando)
+					
+				elif self.y1>0 and self.x1<0:
+					self.comando.motEsquerdo=0
+					self.comando.motDireito=0
+					
+					self.GiraDir1()
+					time.sleep(0.5)
+					self.Re()
+					self.pub.publish(self.comando)
+				elif self.y1<0 and self.x1<0:
+					self.comando.motEsquerdo=0
+					self.comando.motDireito=0
+					time.sleep(0.5)
+					
+					self.GiraEsq1()
+					time.sleep(0.5)
+					self.Re()
+					self.pub.publish(self.comando)
+				else:
+					self.comando.motEsquerdo=0
+					self.comando.motDireito=0
+					time.sleep(0.5)
+					self.GiraDir1()
+					time.sleep(0.5)
+					self.Acelera()
+					self.pub.publish(self.comando)
+					
 			
 
 	#Funcao girar para esquerda
 	def GiraEsq(self):
-		self.comando.motEsquerdo=-3
-		self.comando.motDireito=3
+		self.comando.motEsquerdo=-1.5
+		self.comando.motDireito=1.5
 
 		self.pub.publish(self.comando)
 	#Funcao girar para direita
 	def GiraDir(self):
-		self.comando.motEsquerdo=3
-		self.comando.motDireito=-3
+		self.comando.motEsquerdo=1.5
+		self.comando.motDireito=-1.5
+		self.pub.publish(self.comando)
+	def GiraEsq1(self):
+		self.comando.motEsquerdo=-0.3
+		self.comando.motDireito=0.3
+
+		self.pub.publish(self.comando)
+	#Funcao girar para direita
+	def GiraDir1(self):
+		self.comando.motEsquerdo=0.3
+		self.comando.motDireito=-0.3
 		self.pub.publish(self.comando)
 	# Funcao acelerar
 	def Acelera(self):
-		self.comando.motEsquerdo=3
-		self.comando.motDireito=3
+		self.comando.motEsquerdo=1.5
+		self.comando.motDireito=1.5
 		self.pub.publish(self.comando)
 	def Re(self):
-		self.comando.motEsquerdo=-3
-		self.comando.motDireito=-3
+		self.comando.motEsquerdo=-1.5
+		self.comando.motDireito=-1.5
 		self.pub.publish(self.comando)
 			
 	#funcao que le o sensor no chao
@@ -90,6 +127,9 @@ class ControleRobo():
 
 	def sensorDistCallback(self,data):	
 		self.sensordist=data.distancia
+	def coordCallback(self,data):	
+		self.x1=data.x
+		self.y1=data.y
 
 	
 #Funcao main que chama a classe criada
