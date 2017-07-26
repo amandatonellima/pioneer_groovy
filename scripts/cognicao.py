@@ -38,84 +38,57 @@ class ControleRobo():
 		while not rospy.is_shutdown():
 			if self.x1==0 and self.y1==0:
 				if self.sensorTras1 >0.11 and self.sensorTras2 >0.11 :
-						
-					self.Re()
-					self.pub.publish(self.comando)
+	
+					self.Re(1.5)
 							
-				else:
-						
+				else:						
 					self.comando.motEsquerdo=0
 					self.comando.motDireito=0
-					self.GiraEsq()
+					self.GiraEsq(1.5)
 					time.sleep(1)
 					self.pub.publish(self.comando)
-			elif self.sensorTras1 >0.11 and self.sensorTras2 >0.11 :
-				if self.y1>0 and self.x1>0:
-					self.comando.motEsquerdo=0
-					self.comando.motDireito=0
-					
-					self.GiraEsq1()
-					time.sleep(0.5)
-					self.Acelera()
-					self.pub.publish(self.comando)
-					
-				elif self.y1>0 and self.x1<0:
-					self.comando.motEsquerdo=0
-					self.comando.motDireito=0
-					
-					self.GiraDir1()
-					time.sleep(0.5)
-					self.Re()
-					self.pub.publish(self.comando)
-				elif self.y1<0 and self.x1<0:
-					self.comando.motEsquerdo=0
-					self.comando.motDireito=0
-					time.sleep(0.5)
-					
-					self.GiraEsq1()
-					time.sleep(0.5)
-					self.Re()
-					self.pub.publish(self.comando)
-				else:
-					self.comando.motEsquerdo=0
-					self.comando.motDireito=0
-					time.sleep(0.5)
-					self.GiraDir1()
-					time.sleep(0.5)
-					self.Acelera()
-					self.pub.publish(self.comando)
-					
-			
+			elif self.sensorTras1 >0.11 and self.sensorTras2 >0.11 and self.sensorFrente1 >0.11 and self.sensorFrente2 >0.11:
+				if self.x1>0.1 and self.x1<0.5:
+					if self.y1<0.1 and self.y1>-0.1:
+						self.Acelera(1.5)
+					elif self.y1>0.1:
+						self.GiraEsq(1.5)
+						time.sleep(0.1)
+					elif self.y1<-0.1:
+						self.GiraDir(1.5)
+						time.sleep(0.1)
+				elif self.x1<-0.1 and self.x1>-0.5:
+					if self.y1<0.1 and self.y1>-0.1:
+						self.Re(1.5)
+					elif self.y1>0.13:
+						self.GiraDir(1.5)
+						time.sleep(0.1)
+					elif self.y1<-0.13:
+						self.GiraEsq(1.5)
+						time.sleep(0.1)
+				elif self.x1>0.5:
+					self.Acelera(1.5)
+				elif self.x1<-0.5:
+					self.Re(1.5)
 
 	#Funcao girar para esquerda
-	def GiraEsq(self):
-		self.comando.motEsquerdo=-1.5
-		self.comando.motDireito=1.5
-
+	def GiraEsq(self,i):
+		self.comando.motEsquerdo=-i
+		self.comando.motDireito=i
 		self.pub.publish(self.comando)
 	#Funcao girar para direita
-	def GiraDir(self):
-		self.comando.motEsquerdo=1.5
-		self.comando.motDireito=-1.5
-		self.pub.publish(self.comando)
-	def GiraEsq1(self):
-		self.comando.motEsquerdo=-0.3
-		self.comando.motDireito=0.3
-
-		self.pub.publish(self.comando)
-	#Funcao girar para direita
-	def GiraDir1(self):
-		self.comando.motEsquerdo=0.3
-		self.comando.motDireito=-0.3
+	def GiraDir(self,i):
+		self.comando.motEsquerdo=i
+		self.comando.motDireito=-i
 		self.pub.publish(self.comando)
 	# Funcao acelerar
-	def Acelera(self):
-		self.comando.motEsquerdo=1.5
-		self.comando.motDireito=1.5
+	def Acelera(self,i):
+		self.comando.motEsquerdo=i
+		self.comando.motDireito=i
 		self.pub.publish(self.comando)
-	def Re(self):
-		self.comando.motEsquerdo=-1.5
-		self.comando.motDireito=-1.5
+	def Re(self,i):
+		self.comando.motEsquerdo=-i
+		self.comando.motDireito=-i
 		self.pub.publish(self.comando)
 			
 	#funcao que le o sensor no chao
