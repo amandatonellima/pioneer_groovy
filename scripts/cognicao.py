@@ -17,7 +17,7 @@ class ControleRobo():
 	#Metodo criador da classe
 	def __init__(self,num_robo):
 
-		#defininc=do variaveis
+		#definindo variaveis
 		self.x1=0
 		self.y1=0
 		self.sensordist=[None]*16
@@ -36,11 +36,13 @@ class ControleRobo():
 		self.comando=motores()
 		#inicio do comando do robo
 		while not rospy.is_shutdown():
-			if self.x1==0 and self.y1==0:
-				if self.sensorTras1 >0.11 and self.sensorTras2 >0.11 :
-	
+			if self.sensorTras1 == 0 or self.sensorTras2 == 0:
+					self.Acelera(1.5)
+			if self.sensorFrente1 == 0 or self.sensorFrente2 == 0:
 					self.Re(1.5)
-							
+			if self.x1==0 and self.y1==0:
+				if self.sensorTras1 >0.11 and self.sensorTras2 >0.11:
+					self.Re(1.5)
 				else:						
 					self.comando.motEsquerdo=0
 					self.comando.motDireito=0
@@ -51,25 +53,51 @@ class ControleRobo():
 				if self.x1>0.1 and self.x1<0.5:
 					if self.y1<0.1 and self.y1>-0.1:
 						self.Acelera(1.5)
-					elif self.y1>0.1:
+					elif self.y1>0.095:
 						self.GiraEsq(1.5)
 						time.sleep(0.1)
-					elif self.y1<-0.1:
+					elif self.y1<-0.095:
 						self.GiraDir(1.5)
 						time.sleep(0.1)
 				elif self.x1<-0.1 and self.x1>-0.5:
 					if self.y1<0.1 and self.y1>-0.1:
 						self.Re(1.5)
-					elif self.y1>0.13:
+					elif self.y1>0.095:
 						self.GiraDir(1.5)
 						time.sleep(0.1)
-					elif self.y1<-0.13:
+					elif self.y1<-0.095:
 						self.GiraEsq(1.5)
 						time.sleep(0.1)
 				elif self.x1>0.5:
 					self.Acelera(1.5)
 				elif self.x1<-0.5:
 					self.Re(1.5)
+			'''elif self.sensorTras1 < 0.2 or self.sensorTras2 < 0.2:
+				if self.sensorTras1 < 0.2:
+					self.Acelera(1.5)
+					time.sleep(1)
+					self.GiraEsq(1.5)
+					time.sleep(0.3)
+					print("1")
+				else:
+					self.Acelera(1.5)
+					time.sleep(1)
+					self.GiraDir(1.5)
+					time.sleep(0.3)
+					print("2")
+			elif self.sensorFrente1 < 0.5 or self.sensorFrente2 < 0.5:
+				if self.sensorFrente1 < 0.5:
+					self.Re(1.5)
+					time.sleep(1)
+					self.GiraDir(1.5)
+					time.sleep(0.3)
+					print("3")
+				else:
+					self.Re(1.5)
+					time.sleep(1)
+					self.GiraEsq(1.5)
+					time.sleep(0.3)
+					print("4")'''
 
 	#Funcao girar para esquerda
 	def GiraEsq(self,i):
@@ -115,4 +143,3 @@ if __name__ == '__main__':
 	try:
 		obj_no = ControleRobo(1)
 	except rospy.ROSInterruptException: pass
-

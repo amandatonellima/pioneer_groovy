@@ -71,14 +71,16 @@ class CoordOponente():
 				self.pub.publish(coordcaixa)
 			else:
 				vetcaixa=np.dot(th[indice],transensor)
-				print(th[indice])
+				
 				coordcaixa.x=vetcaixa[0]
 				coordcaixa.y=vetcaixa[1]
+				#rospy.loginfo(coordcaixa.x)
 				self.pub.publish(coordcaixa)
 
 
 	#Funcao que retorna a distancia (d)
 	def sensorDistCallback(self,data):
+		#rospy.loginfo(data)
 		self.d = data.distancia
 
 
