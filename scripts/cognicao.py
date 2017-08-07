@@ -25,21 +25,44 @@ class ControleRobo():
 		self.sensorFrente1=0
 		self.sensorTras2=0
 		self.sensorFrente2=0
+		self.torqueMotDir=0
+		self.torqueMotEsq=0
 		rospy.loginfo("Num Robo "+ str(num_robo))
 
 		self.pub = rospy.Publisher('vrep_ros_interface/robo'+str(num_robo)+'/motores', motores, queue_size=1)
 		#rospy.Subscriber('joy', Joy, self.joy_callback)
 		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/sensoresChao',sensores_chao,self.sensorChaoCallback)	
 		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/sensoresDist',sensores_dist,self.sensorDistCallback)	
-		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/coordenadas', coord, self.coordCallback)	
+		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/coordenadas', coord, self.coordCallback)
+		rospy.Subscriber('vrep_ros_interface/robo'+str(num_robo)+'/torqueMot', motores, self.torqueMotCallback)	
 		#rospy.spin()
 		self.comando=motores()
 		#inicio do comando do robo
 		while not rospy.is_shutdown():
-			if self.sensorTras1 == 0 or self.sensorTras2 == 0:
-					self.Acelera(1.5)
-			if self.sensorFrente1 == 0 or self.sensorFrente2 == 0:
+			print("Direito", self.torqueMotDir)
+			print("Esquerdo", self.torqueMotEsq)
+			if self.sensorTras1 == 0:
+				self.Acelera(1.5)
+				self.GiraDir(1.5)
+			if self.sensorTras2 == 0:
+				self.Acelera(1.5)
+				self.GiraEsq(1.5)
+			if self.sensorFrente1 == 0:
+				self.Re(1.5)
+				self.GiraEsq(1.5)
+			if self.sensorFrente2 == 0:
+				self.Re(1.5)
+				self.GiraDir(1.5)
+			if self.torqueMotEsq == 3 and self.torqueMotDir == 3:
+				time.sleep(1.5)
+				if self.torqueMotEsq == 3 and self.torqueMotDir == 3:
 					self.Re(1.5)
+					self.GiraDir(1.5)
+			elif self.torqueMotEsq == -3 and self.torqueMotDir == -3:
+				time.sleep(1.5)
+				if self.torqueMotEsq == -3 and self.torqueMotDir == -3:
+					self.Acelera(1.5)
+					self.GiraDir(1.5)
 			if self.x1==0 and self.y1==0:
 				if self.sensorTras1 >0.11 and self.sensorTras2 >0.11:
 					self.Re(1.5)
@@ -47,7 +70,7 @@ class ControleRobo():
 					self.comando.motEsquerdo=0
 					self.comando.motDireito=0
 					self.GiraEsq(1.5)
-					time.sleep(1)
+					time.sleep(0.8)
 					self.pub.publish(self.comando)
 			elif self.sensorTras1 >0.11 and self.sensorTras2 >0.11 and self.sensorFrente1 >0.11 and self.sensorFrente2 >0.11:
 				if self.x1>0.1 and self.x1<0.5:
@@ -72,32 +95,6 @@ class ControleRobo():
 					self.Acelera(1.5)
 				elif self.x1<-0.5:
 					self.Re(1.5)
-			'''elif self.sensorTras1 < 0.2 or self.sensorTras2 < 0.2:
-				if self.sensorTras1 < 0.2:
-					self.Acelera(1.5)
-					time.sleep(1)
-					self.GiraEsq(1.5)
-					time.sleep(0.3)
-					print("1")
-				else:
-					self.Acelera(1.5)
-					time.sleep(1)
-					self.GiraDir(1.5)
-					time.sleep(0.3)
-					print("2")
-			elif self.sensorFrente1 < 0.5 or self.sensorFrente2 < 0.5:
-				if self.sensorFrente1 < 0.5:
-					self.Re(1.5)
-					time.sleep(1)
-					self.GiraDir(1.5)
-					time.sleep(0.3)
-					print("3")
-				else:
-					self.Re(1.5)
-					time.sleep(1)
-					self.GiraEsq(1.5)
-					time.sleep(0.3)
-					print("4")'''
 
 	#Funcao girar para esquerda
 	def GiraEsq(self,i):
@@ -131,6 +128,9 @@ class ControleRobo():
 	def coordCallback(self,data):	
 		self.x1=data.x
 		self.y1=data.y
+	def torqueMotCallback(self,data):
+		self.torqueMotDir=data.motDireito
+		self.torqueMotEsq=data.motEsquerdo
 
 	
 #Funcao main que chama a classe criada
