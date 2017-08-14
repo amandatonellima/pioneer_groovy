@@ -92,5 +92,5 @@ if __name__ == '__main__':
 
 	#Instancia a classe e entra em um regime de tratamento de eventuais erros
 	try:
-		obj_no = CoordOponente(1)
+		obj_no = CoordOponente(2)
 	except rospy.ROSInterruptException: pass

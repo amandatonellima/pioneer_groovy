@@ -56,13 +56,27 @@ class ControleRobo():
 			if self.torqueMotEsq == 3 and self.torqueMotDir == 3:
 				time.sleep(1.5)
 				if self.torqueMotEsq == 3 and self.torqueMotDir == 3:
-					self.Re(1.5)
-					self.GiraDir(1.5)
+					i = 0
+					while i < 70 and self.sensorTras1 >0.11 and self.sensorTras2 >0.11 and self.sensorFrente1 >0.11 and self.sensorFrente2 >0.11 :
+						self.Acelera(1.5)
+						time.sleep(0.1)
+						self.GiraDir(1.2)
+						time.sleep(0.08)
+						i += 1
+						print("entrou no loop 1")
+						print(i)
 			elif self.torqueMotEsq == -3 and self.torqueMotDir == -3:
 				time.sleep(1.5)
 				if self.torqueMotEsq == -3 and self.torqueMotDir == -3:
-					self.Acelera(1.5)
-					self.GiraDir(1.5)
+					i = 0
+					while i < 70 and self.sensorTras1 >0.11 and self.sensorTras2 >0.11 and self.sensorFrente1 >0.11 and self.sensorFrente2 >0.11 :
+						self.Re(1.5)
+						time.sleep(0.1)
+						self.GiraDir(1.2)
+						time.sleep(0.08)
+						i += 1
+						print("entrou no loop 2")
+						print(i)
 			if self.x1==0 and self.y1==0:
 				if self.sensorTras1 >0.11 and self.sensorTras2 >0.11:
 					self.Re(1.5)
@@ -141,5 +155,5 @@ if __name__ == '__main__':
 
 	#Instancia a classe e entra em um regime de tratamento de eventuais erros
 	try:
-		obj_no = ControleRobo(1)
+		obj_no = ControleRobo(2)
 	except rospy.ROSInterruptException: pass
