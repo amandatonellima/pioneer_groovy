@@ -39,8 +39,8 @@ class ControleRobo():
 		self.comando=motores()
 		#inicio do comando do robo
 		while not rospy.is_shutdown():
-			print("Direito", self.torqueMotDir)
-			print("Esquerdo", self.torqueMotEsq)
+			#print("Direito", self.torqueMotDir)
+			#print("Esquerdo", self.torqueMotEsq)
 			if self.sensorTras1 == 0:
 				self.Acelera(1.5)
 				self.GiraDir(1.5)
@@ -155,5 +155,5 @@ if __name__ == '__main__':
 
 	#Instancia a classe e entra em um regime de tratamento de eventuais erros
 	try:
-		obj_no = ControleRobo(2)
+		obj_no = ControleRobo(1)
 	except rospy.ROSInterruptException: pass
