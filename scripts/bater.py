@@ -32,16 +32,28 @@ class Bater():
 		#self.comando=motores()
 		self.x1=0
 		self.y1=0
-
+		self.x=1;
 		self.comando1=arma()
 		#inicio do comando do robo
-		self.arma1(2)
-		self.arma1(0)
-		self.arma2(2)
-		self.arma2(0)
+		#self.arma2(2)
+		#time.sleep(1)
+		#self.arma2(0)
+
+		
+		#self.arma1(2)
+		#self.arma1(0)
+		
 
 		while not rospy.is_shutdown():
 
+			if self.x==1:
+				self.arma1(2)
+				self.arma1(2)
+				self.arma1(0)
+				self.arma2(2)
+				self.arma2(0)
+
+			self.x=0
 			'''if self.x1>0.1 and self.x1<0.5:
 				while self.y1<0.1 and self.y1>-0.1:
 					self.arma1(2)
@@ -65,12 +77,18 @@ class Bater():
 	def arma2(self,i):			
 			self.comando1.motArma2=i
 			self.pub1.publish(self.comando1)
-			time.sleep(1)
+			time.sleep(2)
 
 	def arma1(self,i):			
 			self.comando1.motArma1=i
 			self.pub1.publish(self.comando1)
-			time.sleep(1.18)
+			time.sleep(1)
+
+	def arma3(self,i):			
+			self.comando1.motArma2=i
+			self.comando1.motArma1=i
+			self.pub1.publish(self.comando1)
+			time.sleep(1)
 
 	def coordCallback(self,data):	
 		self.x1=data.x
